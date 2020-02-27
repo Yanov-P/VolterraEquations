@@ -12,39 +12,57 @@ namespace Volter
         [STAThread]
         static void Main(string[] args)
         {
-            var zadacha = new ZadachaVolter();
-            var f = new Form1();
-            var f1 = new Form1();
+            var f2s = new Form1("Second Problem Simpson", true);
+            var f2lr = new Form1("Second Problem Left Rectangles", true);
+            var f2sn = new Form1("Second Problem Simpson Nonlinear", true);
+            var f1 = new Form1("First Problem", true);
 
-            f.ClearLines();
-            f.AddLine("Точное решение");
-            f.AddXY("Точное решение", 0, 1);
-            f.AddXY("Точное решение", 1, 1);
+            var f1err = new Form1("First Problem Errors");
+            f1err.AddLine("Errors");
+            f1err.AddLine("Straight Line");
+            f1err.AddXY("Straight Line", 0.25, 0.109942);
+            f1err.AddXY("Straight Line", 0.0019, 0.001);
 
-            f1.ClearLines();
-            f1.AddLine("Относительные погрешности");
-            f1.AddLine("Прямая");
-            f1.AddXY("Прямая", 0, 0);
-            f1.AddXY("Прямая", 0.25, 0.1);
+            var p = new Problem(0, 1);
+            var n = new Net(0.1, p);
+            var s = new Solver(n, p);
 
-            for (int j = 0; j < 8; j++)
+            var p3 = new Problem(0, 1, MyFunctions.X_ExpXSMinus1_, MyFunctions.ExpXMinusX);
+            var n3 = new Net(0.1, p3);
+            var s3 = new Solver(n3, p3);
+            
+            for (double i = 0.25; i >= 0.001; i/=2)
             {
-                string lineName = zadacha.h.ToString();
-                f.AddLine(lineName);
-                zadacha.SolveKvadr();
-                for (int i = 0; i < zadacha.curRes.Length; i++)
-                {
-                    f.AddXY(lineName, zadacha.x(i), zadacha.curRes[i]);
-                }
-                f1.AddXY("Относительные погрешности", zadacha.h, zadacha.OtnositPogr());
-                zadacha.h /= 2;
+                n.SetConstNetStep(i);
+
+                s.Quadrature = Quadratures.Trapeze;
+                s.QuadratureSolve();
+                f1.AddLine(i.ToString(), s.X, s.Y);
+                f1err.AddXY("Errors", i, s.RelativeError(s.Y));
+
+                s.Quadrature = Quadratures.Simpson;
+
+                s.SimpleIterationSolve(0.001);
+                f2s.AddLine(i.ToString(), s.X, s.Y);
+
+                s.YFunct = MyFunctions.SquaredX;
+                s.SimpleIterationSolve(0.001);
+                f2sn.AddLine(i.ToString(), s.X, s.Y);
+
+                s.YFunct = MyFunctions.X;
+
+                s.Quadrature = Quadratures.LeftRectangle;
+                s.SimpleIterationSolve(0.001);
+                f2lr.AddLine(i.ToString(), s.X, s.Y);
             }
             
             Application.EnableVisualStyles();
             f1.Show();
-            Application.Run(f);
-            
-            //Application.Run(f1);
+            f1err.Show();
+            f2lr.Show();
+            f2sn.Show();
+            Application.Run(f2s);
+
         }
     }
 }

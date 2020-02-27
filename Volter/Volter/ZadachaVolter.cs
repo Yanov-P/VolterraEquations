@@ -8,7 +8,7 @@ namespace Volter
 {
     class ZadachaVolter
     {
-        public double h = 0.25;
+        public double h = 0.1;
         public double a = 0;
         public double b = 1;
         public double[] curRes = {};
@@ -30,14 +30,14 @@ namespace Volter
         public double OtnositPogr()
         {
             double res = 0;
-            double resZn = 0;
+            double resDen = 0;
             for (int i = 0; i < curRes.Length - 1; i++)
             {
                 res = Math.Max(Math.Abs(curRes[i] - curRes[i + 1]), res);
-                resZn = Math.Max(Math.Abs(curRes[i]), resZn);
+                resDen = Math.Max(Math.Abs(curRes[i]), resDen);
             }
 
-            return res / resZn;
+            return res / resDen;
         }
         private double A(int i)
         {
@@ -57,6 +57,7 @@ namespace Volter
 			        sum += K(i,j) * res[j] * A(j);
 			    }
                 res[i] = 1 / (1 - K(i, i) * A(i)) * (f(i) + sum);
+                Console.WriteLine(i + "\tK\t" + K(i, i) + "\tA\t" + A(i) + "\tf\t" + f(i) + "\tx\t" + x(i));
             }
             curRes = res;
         }
