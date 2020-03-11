@@ -6,9 +6,13 @@
 
 Volterra equation solved with trapezoid quadrature and Simpson quadrature
 
+![First](https://github.com/Yanov-P/VolterraEquations/blob/master/first.png)
+
 **Second problem**
 
-Simple iterations method in comparsion with Simpson quadrature
+Simple iterations method 
+
+![Second](https://github.com/Yanov-P/VolterraEquations/blob/master/second.png)
 
 **Third problem**
 
